@@ -4,8 +4,9 @@ import { Component, Fragment, h, JSX } from 'preact';
 
 import { GenericComponent } from '@leanup/lib';
 
+import { Item } from '../../services/item-list.service';
 import { AppController } from './controller';
-import { AppState, Item } from './interfaces';
+import { AppState } from './interfaces';
 
 export class AppComponent extends Component<unknown, AppState> implements GenericComponent {
   public readonly ctrl: AppController;
@@ -60,7 +61,11 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
             })}
           </ul>
         </main>
-        <div
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            this.ctrl.addItem(this.state.item);
+          }}
           class="modal"
           style={{
             display: this.state.modalVisible ? 'block' : 'none',
@@ -80,6 +85,8 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
               Name:
               <br />
               <input
+                autoFocus
+                required
                 value={this.state.item.name}
                 onChange={(event) => {
                   this.ctrl.handleChange('name', event);
@@ -93,6 +100,7 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
               Anzahl:
               <br />
               <input
+                required
                 type="number"
                 name="anzahl"
                 value={this.state.item.anzahl}
@@ -106,6 +114,7 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
               Preis:
               <br />
               <input
+                required
                 type="number"
                 name="preis"
                 value={this.state.item.preis}
@@ -114,16 +123,9 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
                 }}
               />
             </label>
-            <button
-              onClick={() => {
-                this.ctrl.addItem(this.state.item);
-              }}
-              class="addBtn"
-            >
-              Add
-            </button>
+            <button>Hinzufügen</button>
           </div>
-        </div>
+        </form>
       </>
     );
   }

@@ -1,18 +1,27 @@
 import { JSX } from 'preact';
 
-import { AbstractController, ViewControllerCouple } from '@leanup/lib';
+import { AbstractController, DI, ViewControllerCouple } from '@leanup/lib';
 
-import { AppState, Item } from './interfaces';
+import { Item, ItemListService } from '../../services/item-list.service';
+import { AppState } from './interfaces';
 
 export class AppController extends AbstractController implements AppState {
+  private readonly itemListService: ItemListService = DI.get<ItemListService>('ItemListService');
+
+  public itemList: Item[] = [];
   public item: Item;
-  public itemList: Set<Item>;
   public modalVisible = true;
 
   public constructor(_props: unknown, couple: ViewControllerCouple) {
     super(couple);
+    this.itemListService.itemList$.subscribe({
+      next: (itemList: Item[]) => {
+        this.itemList = itemList;
+        console.log(this.itemList);
+        this.doRender();
+      },
+    });
     this.item = this.createItem();
-    this.itemList = new Set(JSON.parse(localStorage.getItem('itemList') || '[]'));
   }
 
   private createItem(): Item {
@@ -24,30 +33,21 @@ export class AppController extends AbstractController implements AppState {
     };
   }
 
-  private storeItemList(itemList: Set<Item>) {
-    localStorage.setItem('itemList', JSON.stringify(Array.from(itemList)));
-  }
-
   public deleteItem(item: Item): void {
-    if (this.itemList.has(item)) {
-      this.itemList.delete(item);
-      this.storeItemList(this.itemList);
-      this.doRender();
-    }
+    this.itemListService.deleteItem(item);
   }
 
   public addItem(item: Item): void {
-    this.itemList.add(item);
-    this.storeItemList(this.itemList);
-    this.modalVisible = false;
-    this.item = this.createItem();
-    this.doRender();
+    if (this.itemListService.addItem(item)) {
+      this.item = this.createItem();
+      this.toggleModal(false);
+    }
   }
 
   public setErledigt(item: Item): void {
-    item.erledigt = !item.erledigt;
-    this.storeItemList(this.itemList);
-    this.doRender();
+    this.itemListService.patchItem(item, {
+      erledigt: !item.erledigt,
+    });
   }
 
   public handleChange(

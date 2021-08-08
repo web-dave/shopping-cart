@@ -1,12 +1,7 @@
-export interface Item {
-  name: string;
-  anzahl: number;
-  preis: number;
-  erledigt: boolean;
-}
+import { Item } from '../../services/item-list.service';
 
 export interface AppState {
   item: Item;
-  itemList: Set<Item>;
+  itemList: Item[];
   modalVisible: boolean;
 }
