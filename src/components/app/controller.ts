@@ -1,4 +1,4 @@
-import { JSX } from 'preact';
+import './style.css';
 
 import { AbstractController, DI, ViewControllerCouple } from '@leanup/lib';
 
@@ -12,7 +12,7 @@ export class AppController extends AbstractController implements AppState {
   public item: Item;
   public modalVisible = true;
 
-  public constructor(_props: unknown, couple: ViewControllerCouple) {
+  public constructor(couple: ViewControllerCouple) {
     super(couple);
     this.itemListService.itemList$.subscribe({
       next: (itemList: Item[]) => {
@@ -48,24 +48,6 @@ export class AppController extends AbstractController implements AppState {
     this.itemListService.patchItem(item, {
       erledigt: !item.erledigt,
     });
-  }
-
-  public handleChange(
-    attrName: 'name' | 'anzahl' | 'preis',
-    { currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>
-  ): void {
-    switch (attrName) {
-      case 'name':
-        this.item.name = currentTarget.value;
-        break;
-      case 'preis':
-        this.item.preis = parseFloat(currentTarget.value);
-        break;
-      case 'anzahl':
-        this.item.anzahl = parseInt(currentTarget.value, 10);
-        break;
-    }
-    this.doRender();
   }
 
   private toggleModal(visible: boolean): void {

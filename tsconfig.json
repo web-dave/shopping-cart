@@ -26,6 +26,6 @@
     "jsxFragmentFactory": "Fragment",
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "tests/**/*"],
+  "include": ["src/**/*", "tests/**/*", "framework.ts"],
   "exclude": []
 }

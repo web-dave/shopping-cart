@@ -1,5 +1,3 @@
-import './style.css';
-
 import { Component, Fragment, h, JSX } from 'preact';
 
 import { GenericComponent } from '@leanup/lib';
@@ -15,12 +13,30 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
 
   public constructor(props: unknown) {
     super(props);
-    this.ctrl = new AppController(props, {
+    this.ctrl = new AppController({
       hooks: {
         doRender: this.forceUpdate.bind(this),
       },
     });
     this.state = this.ctrl;
+  }
+
+  public handleChange(
+    attrName: 'name' | 'anzahl' | 'preis',
+    { currentTarget }: JSX.TargetedEvent<HTMLInputElement, Event>
+  ): void {
+    switch (attrName) {
+      case 'name':
+        this.ctrl.item.name = currentTarget.value;
+        break;
+      case 'preis':
+        this.ctrl.item.preis = parseFloat(currentTarget.value);
+        break;
+      case 'anzahl':
+        this.ctrl.item.anzahl = parseInt(currentTarget.value, 10);
+        break;
+    }
+    this.forceUpdate();
   }
 
   public render(): JSX.Element {
@@ -89,7 +105,7 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
                 required
                 value={this.state.item.name}
                 onChange={(event) => {
-                  this.ctrl.handleChange('name', event);
+                  this.handleChange('name', event);
                 }}
                 type="text"
                 name="name"
@@ -105,7 +121,7 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
                 name="anzahl"
                 value={this.state.item.anzahl}
                 onChange={(event) => {
-                  this.ctrl.handleChange('anzahl', event);
+                  this.handleChange('anzahl', event);
                 }}
               />
             </label>
@@ -119,7 +135,7 @@ export class AppComponent extends Component<unknown, AppState> implements Generi
                 name="preis"
                 value={this.state.item.preis}
                 onChange={(event) => {
-                  this.ctrl.handleChange('preis', event);
+                  this.handleChange('preis', event);
                 }}
               />
             </label>
