@@ -1,0 +1,44 @@
+<header class="header">
+  <h1>Einkaufsliste</h1>
+  <button (click)="ctrl.openModal()">+</button>
+</header>
+<main>
+  <ul>
+    <li
+      [ngClass]="{checked: item.erledigt}"
+      *ngFor="let item of ctrl.itemList ; let i = index"
+      (click)="ctrl.setErledigt(item)"
+    >
+      {{item.anzahl}}x {{item.name}}
+      <span class="close" (click)="ctrl.deleteItem(item)">X</span>
+    </li>
+  </ul>
+</main>
+<form
+  (submit)="addItem(name.value, anzahl.value, preis.value)"
+  class="modal"
+  [style.display]="ctrl.modalVisible ? 'block' : 'none'"
+>
+  <div class="modal-content">
+    <span class="close" (click)="ctrl.closeModal()"> &times; </span>
+    <label>
+      <i class="fa fa-user icon"></i>
+      Name:
+      <br />
+      <input #name autofocus required type="text" name="name" [value]="ctrl.item.name" />
+    </label>
+    <label>
+      <i class="fa fa-envelope icon"></i>
+      Anzahl:
+      <br />
+      <input #anzahl required type="number" name="anzahl" [value]="ctrl.item.anzahl" />
+    </label>
+    <label>
+      <i class="fa fa-key icon"></i>
+      Preis:
+      <br />
+      <input #preis required type="number" name="preis" [value]="ctrl.item.preis" />
+    </label>
+    <button>Hinzufügen</button>
+  </div>
+</form>
